@@ -1,0 +1,45 @@
+{% extends './base.html' %}
+{% load note_color %}
+{% block title %}トップページ{% endblock title %}
+{% block page_name %}Welcome. Take Your Time!{% endblock page_name %}
+
+{% comment %} メインコンテンツ {% endcomment %}
+{% block content %}
+<div class="box">
+    <div class="tabs is-centered">
+        <ul>
+            <li class="is-active"><a>人気の曲</a></li>
+            <li><a>最近の更新</a></li>
+        </ul>
+    </div>
+    {% if all_range_list %}
+    {% for range in all_range_list %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="/ranges/{{ range.artist.pk }}/{{ range.song.pk }}/detail"
+                    class="title is-5 has-text-info">{{ range.song }}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ range.artist }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <div class="tag {{ range.lowest_note.pk | color }}">
+                    <p>{{ range.lowest_note }}</p>
+                </div>
+                <div class="tag {{ range.highest_note.pk | color }}">
+                    <p>{{ range.highest_note }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+    {% else %}
+    <h1 class=" has-text-danger title">データベースが空です！</h1>
+    {% endif %}
+</div>
+{% endblock content %}

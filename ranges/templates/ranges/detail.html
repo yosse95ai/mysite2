@@ -1,0 +1,75 @@
+{% extends './base.html' %}
+{% load note_color %}
+{% block title %}詳細ページ{% endblock title %}
+{% block page_name %}Songs Detail{% endblock page_name %}
+
+{% comment %} メインコンテンツ {% endcomment %}
+{% block content %}
+<div class="hero is-warning is-bold is-small">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title has-text-gray">{{song}}</h1>
+        </div>
+    </div>
+</div>
+<div class="hero is-white is-small">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <ul class="subtitle is-5">
+                        作曲
+                        {% for composer in composers %}
+                        <li>&emsp;-<a href="#" class="has-text-link subtitle is-6"> {{composer}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="column">
+                    <ul class="subtitle is-5">
+                        作詞
+                        {% for lyricist in lyricists %}
+                        <li>&emsp;-<a href="#" class="has-text-link subtitle is-6"> {{lyricist}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% if genre.pk == "VC" %}
+                <div class="column">
+                    <ul class="subtitle is-5">
+                        ボーカロイド
+                        {% for performer in performers %}
+                        <div class="card is-shadowless">
+                            <li>&emsp;-<a href="#" class="has-text-link subtitle is-6"> {{performer}}</a></li>
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            <div class="columns is-6">
+                <div class="column is-offset-2">
+                    最低音：<a href="#" class="tag {{ lowest_note.pk | color }} is-large">{{lowest_note}}</a>
+                </div>
+                <div class="column is-5 is-offset-1">
+                    最高音：<a href="#" class="tag {{ highest_note.pk | color }} is-large"> {{highest_note}}</a>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column subtitle is-5">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-footer">
+        <div class="column">
+            <ul>
+                <li>ジャンル：<a href="#">{{genre}}</a></li>
+                {% if release %}
+                <li>リリース：{{release}}</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
