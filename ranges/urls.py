@@ -4,8 +4,9 @@ from . import views
 
 app_name = 'ranges'
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
+    path('', views.index, name='index'),
     path('<slug:artist_pk>/<slug:song_pk>/detail/', views.detail, name='detail'),
     path('search/', views.search, name='search'),
-    path('song-search-result/', views.result, name='result')
+    path('search-result/song/', views.result, name='result'),
+    path('search-result/range-<slug:note_pk>', views.result_renge, name='result_range'),
 ]

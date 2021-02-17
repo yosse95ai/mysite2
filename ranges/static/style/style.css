@@ -1,0 +1,19 @@
+/* base view css */
+main {
+    background-color: #E6FFE9;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+}
+
+
+/* tab-bars control view css */
+.panel-content {
+    display: none
+}
+
+.panel-content.is-show {
+    display: block;
+}

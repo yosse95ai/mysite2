@@ -2,17 +2,26 @@
 {% load note_color %}
 {% block title %}検索ページ{% endblock title %}
 {% block page_name %}Fell Free to Search{% endblock page_name %}
-
 {% comment %} メインコンテンツ {% endcomment %}
 {% block content %}
 <div class="box">
     <div class="tabs is-centered">
-        <ul>
-            <li class="is-active"><a>曲名検索</a></li>
-            <li><a>アーティスト検索</a></li>
-            <li><a>音域検索</a></li>
-            <li><a>ジャンル検索</a></li>
+        <ul class="tab-group">
+            <li class="tab is-active"><a>アーティスト検索</a></li>
+            <li class="tab"><a>音域検索</a></li>
+            <li class="tab"><a>ジャンル検索</a></li>
         </ul>
+    </div>
+    <div class="">
+        <div class="panel-content is-show">
+            artist
+        </div>
+        <div class="panel-content">
+            range
+        </div>
+        <div class="panel-content">
+            genre
+        </div>
     </div>
 </div>
 {% endblock content %}

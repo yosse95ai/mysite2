@@ -20,7 +20,7 @@
                     <ul class="subtitle is-5">
                         作曲
                         {% for composer in composers %}
-                        <li>&emsp;-<a href="#" class="has-text-link subtitle is-6"> {{composer}}</a></li>
+                        <li><a href="#" class="has-text-link subtitle is-7"> {{composer}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -28,17 +28,27 @@
                     <ul class="subtitle is-5">
                         作詞
                         {% for lyricist in lyricists %}
-                        <li>&emsp;-<a href="#" class="has-text-link subtitle is-6"> {{lyricist}}</a></li>
+                        <li><a href="#" class="has-text-link subtitle is-7"> {{lyricist}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
+                {% if arrangers %}
+                <div class="column">
+                    <ul class="subtitle is-5">
+                        編曲
+                        {% for arranger in arrangers %}
+                        <li><a href="#" class="has-text-link subtitle is-7"> {{arranger}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
                 {% if genre.pk == "VC" %}
                 <div class="column">
                     <ul class="subtitle is-5">
                         ボーカロイド
                         {% for performer in performers %}
                         <div class="card is-shadowless">
-                            <li>&emsp;-<a href="#" class="has-text-link subtitle is-6"> {{performer}}</a></li>
+                            <li><a href="#" class="has-text-link subtitle is-7"> {{performer}}</a></li>
                         </div>
                         {% endfor %}
                     </ul>

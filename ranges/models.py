@@ -17,9 +17,12 @@ class Song(models.Model):
     song_name = models.CharField("song's tilte", max_length=100)
     composer = models.ManyToManyField(Artist, related_name="composer_name")
     lyricist = models.ManyToManyField(Artist, related_name="lyricist_name")
+    arranger = models.ManyToManyField(
+        Artist, related_name="arranger_name", null=True, blank=True)
 
     def __str__(self):
         return self.song_name
+
 
 
 class Note(models.Model):
@@ -56,7 +59,12 @@ class Range(models.Model):
     latest_update = models.DateTimeField('date update lately', auto_now=True)
 
     def __str__(self):
-        return self.artist_id
+        s_name = Song.objects.get(pk=self.song_id)
+        a_name=Artist.objects.get(pk=self.artist_id)
+        return s_name.song_name+'/'+a_name.artist_name
 
     class Meta:
         unique_together = ['song', 'artist']
+
+    def get_query_release(self):
+        return Range.objects.order_by('-release_date')[:3]

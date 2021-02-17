@@ -1,5 +1,5 @@
 {% extends './base.html' %}
-{% load note_color %}
+{% load note_control %}
 {% block title %}検索結果{% endblock title %}
 {% block page_name %}
 <i class="fas fa-search has-text-grey-lighter"></i><span class="has-text-grey-dark"> {{input_name}}</span>
@@ -7,22 +7,25 @@
 
 {% block content %}
 <div class="box">
-    {% if range_error or song_error %}
+    {% if range_error or song_error or range_note_error %}
     <div class="columns">
         {% if range_error %}
-        <div class="column has-text-danger title">
-            <div class="media">
-                データベースへのデータ登録がありませんでした。
-            </div>
+        <div class="column subtitle">
+            <i class="fas fa-chevron-right"></i>{{input_name}}
+            <a href="#" class="has-text-danger">を音域データベースに登録しませんか？</a>
         </div>
         {% elif song_error %}
         <div class="column subtitle">
-            {{input_name}}<span class="has-text-danger">はデータベースへ登録がありませんでした。</span>
+            <i class="fas fa-chevron-right"></i>{{input_name}}
+            <a href="#" class="has-text-danger">を曲データベースに登録しませんか？</a>
         </div>
         {% endif %}
     </div>
-    {% else %}
-    {% for result in results %}
+    <div class="content has-text-grey-light">
+        検索結果：0件
+    </div>
+    {% elif results %}
+    {##}{% for result in results %}
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
@@ -36,21 +39,88 @@
         </div>
         <div class="level-right">
             <div class="column tags are-medium">
-                <div class="tag {{ result.lowest_note.pk | color }}">
-                    <p>{{ result.lowest_note }}</p>
-                </div>
-                <div class="tag {{ result.highest_note.pk | color }}">
-                    <p>{{ result.highest_note }}</p>
-                </div>
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
             </div>
         </div>
     </div>
-    {% if forloop.last %}
+    {######}{% if forloop.last %}
     <div class="content has-text-grey-light">
         検索結果：{{forloop.counter}}件
     </div>
-    {% endif %}
-    {% endfor %}
+    {######}{% endif %}
+    {##}{% endfor %}
+    {% elif high_ranges or low_ranges %}
+    {##}{% if high_ranges %}
+    {######}{% for result in high_ranges %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {######}{% endfor %}
+    {##}{% elif low_ranges %}
+    {######}{% for result in low_ranges %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {######}{% endfor %}
+    {##}{% endif %}
+    <div class="content has-text-grey-light">
+        検索結果：{{h_num|add:l_num}}件
+    </div>
     {% endif %}
 </div>
 {% endblock content %}

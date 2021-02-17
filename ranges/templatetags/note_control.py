@@ -29,3 +29,4 @@ def color(pk):
         return 'is-link is-black'
     else:
         return 'is-light'
+

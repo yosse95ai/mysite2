@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -7,16 +8,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" defer></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css" />
-	<style>
-		main {
-			background-color: #E6FFE9;
-		}
-
-		.navbar {
-			position: sticky;
-			top: 0;
-		}
-	</style>
+	<link rel="stylesheet" href="{% static 'style/style.css' %}">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="{% static 'js/func.js' %}"></script>
 </head>
 
 <body>
@@ -70,9 +64,21 @@
 				</form>
 				<p class="menu-label">MENU</p>
 				<ul class="menu-list">
-					<li><a href="#"><i class="fas fa-users"></i> アーティストで検索 <i class="fas fa-chevron-right"></i></a></li>
-					<li><a href="#"><i class="fas fa-chart-bar"></i> 音域で検索 <i class="fas fa-chevron-right"></i></a></li>
-					<li><a href="#"><i class="fas fa-tags"></i> ジャンルで検索 <i class="fas fa-chevron-right"></i></a></li>
+					<li>
+						<a href="{% url 'ranges:search' %}">
+							<i class="fas fa-users"></i> アーティストで検索 <i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'ranges:search' %}">
+							<i class="fas fa-chart-bar"></i> 音域で検索 <i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'ranges:search' %}">
+							<i class="fas fa-tags"></i> ジャンルで検索 <i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
 				</ul>
 				<p class="menu-label">ABOUT ME</p>
 				<div class="media">
