@@ -1,8 +1,56 @@
 {% extends './base.html' %}
 {% load note_color %}
 {% block title %}検索結果{% endblock title %}
-{% block page_name %}<i class="fas fa-search has-text-white"></i> {{input_name}}{% endblock page_name %}
+{% block page_name %}
+<i class="fas fa-search has-text-grey-lighter"></i><span class="has-text-grey-dark"> {{input_name}}</span>
+{% endblock page_name %}
 
 {% block content %}
-
+<div class="box">
+    {% if range_error or song_error %}
+    <div class="columns">
+        {% if range_error %}
+        <div class="column has-text-danger title">
+            <div class="media">
+                データベースへのデータ登録がありませんでした。
+            </div>
+        </div>
+        {% elif song_error %}
+        <div class="column subtitle">
+            {{input_name}}<span class="has-text-danger">はデータベースへ登録がありませんでした。</span>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    {% for result in results %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <div class="tag {{ result.lowest_note.pk | color }}">
+                    <p>{{ result.lowest_note }}</p>
+                </div>
+                <div class="tag {{ result.highest_note.pk | color }}">
+                    <p>{{ result.highest_note }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if forloop.last %}
+    <div class="content has-text-grey-light">
+        検索結果：{{forloop.counter}}件
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+</div>
 {% endblock content %}

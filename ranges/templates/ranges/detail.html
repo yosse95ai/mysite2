@@ -43,6 +43,18 @@
                         {% endfor %}
                     </ul>
                 </div>
+                {% else %}
+                <div class="column">
+                    <ul class="subtitle is-5">
+                        アーティスト
+                        {% for performer in performers %}
+                        <div class="card is-shadowless">
+                            <li>&emsp;-<a href="#" class="has-text-link subtitle is-6">
+                                    {{performer}}</a></li>
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
                 {% endif %}
             </div>
             <div class="columns is-6">

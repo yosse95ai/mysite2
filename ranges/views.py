@@ -16,8 +16,8 @@ class IndexView(generic.ListView):
         return Range.objects.order_by('-pub_date')[:10]
 
 
-def queryError(error_name):
-    return {error_name: True}
+def queryError(error_name,input_name=None):
+    return {error_name: True,'input_name':input_name}
 
 
 def detail(request, artist_pk, song_pk):
@@ -67,13 +67,13 @@ def result(request):
     results = list()
     songs = Song.objects.filter(song_name=input_name)
     if not songs:
-        context = queryError('song_error')
+        context = queryError('song_error',input_name=input_name)
     else:
         for song in songs:
             try:
                 result = get_list_or_404(Range, song=song.pk)
             except Range.DoesNotExist:
-                context = queryError('range_error')
+                context = queryError('range_error', input_name=input_name)
             else:
                 results += result
                 context = {
