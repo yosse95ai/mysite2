@@ -1,6 +1,6 @@
 {% extends './base.html' %}
 {% load note_color %}
-{% block title %}詳細ページ{% endblock title %}
+{% block title %}{{song}}-{{artist}}{% endblock title %}
 {% block page_name %}Songs Detail{% endblock page_name %}
 
 {% comment %} メインコンテンツ {% endcomment %}
@@ -51,11 +51,6 @@
                 </div>
                 <div class="column is-5 is-offset-1">
                     最高音：<a href="#" class="tag {{ highest_note.pk | color }} is-large"> {{highest_note}}</a>
-                </div>
-            </div>
-            <div class="columns">
-                <div class="column subtitle is-5">
-
                 </div>
             </div>
         </div>

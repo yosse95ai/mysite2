@@ -11,14 +11,21 @@
 		main {
 			background-color: #E6FFE9;
 		}
+
+		.navbar {
+			position: sticky;
+			top: 0;
+		}
 	</style>
 </head>
 
 <body>
-	<header class="navbar">
+	<header class="navbar has-background-dark">
 		<div class="navbar-brand">
 			<span class="navbar-item">
-				<span class="fas fa-microphone-alt"></span>Singing Range Database
+				<a href="{% url 'ranges:index' %}" class="has-text-light">
+					<span class="fas fa-microphone-alt"></span>
+					Singing Range Database</a>
 			</span>
 		</div>
 		<div class="navbar-end">
@@ -43,21 +50,24 @@
 	</div>
 	<main class="columns">
 		<div class="column is-7 is-offset-1">
-				{% block content %}
-				{% comment %} Main Contents {% endcomment %}
-				{% endblock content %}
+			{% block content %}
+			{% comment %} Main Contents {% endcomment %}
+			{% endblock content %}
 		</div>
 		<div class="column submenu is-3">
 			<aside class="box menu">
 				<p class="menu-label">SEARCH</p>
-				<div class="field has-addons">
-					<div class="control">
-						<input class="input" type="text" name="search" placeholder="曲名で検索">
+				<form method="post" action="{% url 'ranges:result' %}">
+					<div class="field has-addons">
+						<div class="control">
+							{% csrf_token %}
+							<input class="input" type="text" name="song_name" placeholder="曲名で検索" required>
+						</div>
+						<div class="control">
+							<input class="button is-info" type="submit" value="検索">
+						</div>
 					</div>
-					<div class="control">
-						<a class="button is-info"><i class="fa fa-search"></i>検索</a>
-					</div>
-				</div>
+				</form>
 				<p class="menu-label">MENU</p>
 				<ul class="menu-list">
 					<li><a href="#"><i class="fas fa-users"></i> アーティストで検索 <i class="fas fa-chevron-right"></i></a></li>
