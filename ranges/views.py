@@ -6,10 +6,15 @@ from django.utils import timezone
 from django.http import HttpResponse
 
 from .models import Range, Artist, Song, Note
+from .templatetags import noteBar as nb
+
+
+def queryError(error_name, input_name=None):
+    return {error_name: True, 'input_name': input_name}
 
 
 def index(request):
-    pub_list = Range.objects.order_by('-pub_date')[:10]
+    pub_list = Range.objects.order_by('-latest_update')[:10]
     release_list = Range.objects.order_by('-release_date')[:10]
     context = {
         'pub_list': pub_list,
@@ -17,18 +22,13 @@ def index(request):
     }
     return render(request, 'ranges/index.html', context)
 
-
-def queryError(error_name, input_name=None):
-    return {error_name: True, 'input_name': input_name}
-
-
 def detail(request, artist_pk, song_pk):
     try:
-        artist = get_object_or_404(Artist, pk=artist_pk)
-        song = get_object_or_404(Song, pk=song_pk)
-        target = get_object_or_404(Range, song=song, artist=artist)
-        lowest_note = get_object_or_404(Note, pk=target.lowest_note.pk)
-        highest_note = get_object_or_404(Note, pk=target.highest_note.pk)
+        artist = Artist.objects.get(pk=artist_pk)
+        song = Song.objects.get(pk=song_pk)
+        target = Range.objects.get(song=song, artist=artist)
+        lowest_note = Note.objects.get(pk=target.lowest_note.pk)
+        highest_note = Note.objects.get(pk=target.highest_note.pk)
     except Artist.DoesNotExist:
         context = queryError('artist_error')
     except Song.DoesNotExist:
@@ -60,9 +60,19 @@ def detail(request, artist_pk, song_pk):
         }
     return render(request, 'ranges/detail.html', context)
 
-
 def search(request):
-    content = {}
+    notes_list = Note.objects.all()
+    note_list=list()
+    for note in notes_list:
+        if Range.objects.filter(highest_note=note.pk) or Range.objects.filter(lowest_note=note.pk):
+            note_list.append(nb.noteToNumber(note.pk))
+    ordered_note=list()
+    for note_n in sorted(note_list):
+        pk = nb.numberToNote(note_n)
+        ordered_note.append(notes_list.get(note_id=pk))
+    content = {
+        'notes_list': ordered_note
+    }
     return render(request, 'ranges/search.html', content)
 
 
@@ -74,9 +84,8 @@ def result(request):
         context = queryError('song_error', input_name=input_name)
     else:
         for song in songs:
-            try:
-                result = get_list_or_404(Range, song=song.pk)
-            except Range.DoesNotExist:
+            result = Range.objects.filter(song=song.pk)
+            if not result:
                 context = queryError('range_error', input_name=input_name)
             else:
                 results += result
@@ -87,7 +96,7 @@ def result(request):
     return render(request, 'ranges/result.html', context)
 
 
-def result_renge(request, note_pk):
+def result_range(request, note_pk):
     high_ranges = Range.objects.filter(highest_note=note_pk)
     low_ranges = Range.objects.filter(lowest_note=note_pk)
     if not high_ranges and not low_ranges:

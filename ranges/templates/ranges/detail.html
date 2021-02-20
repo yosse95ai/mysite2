@@ -1,14 +1,14 @@
 {% extends './base.html' %}
-{% load note_color %}
+{% load note_control %}
 {% block title %}{{song}}-{{artist}}{% endblock title %}
-{% block page_name %}Songs Detail{% endblock page_name %}
+{% block page_name %}Song Detail{% endblock page_name %}
 
 {% comment %} メインコンテンツ {% endcomment %}
 {% block content %}
 <div class="hero is-warning is-bold is-small">
     <div class="hero-body">
         <div class="container">
-            <h1 class="title has-text-gray">{{song}}</h1>
+            <h1 class="title has-text-gray">{{song.song_name}}</h1>
         </div>
     </div>
 </div>
@@ -20,7 +20,7 @@
                     <ul class="subtitle is-5">
                         作曲
                         {% for composer in composers %}
-                        <li><a href="#" class="has-text-link subtitle is-7"> {{composer}}</a></li>
+                        <li><a href="#" class="has-text-link subtitle is-7"> {{composer.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -28,7 +28,7 @@
                     <ul class="subtitle is-5">
                         作詞
                         {% for lyricist in lyricists %}
-                        <li><a href="#" class="has-text-link subtitle is-7"> {{lyricist}}</a></li>
+                        <li><a href="#" class="has-text-link subtitle is-7"> {{lyricist.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -37,7 +37,7 @@
                     <ul class="subtitle is-5">
                         編曲
                         {% for arranger in arrangers %}
-                        <li><a href="#" class="has-text-link subtitle is-7"> {{arranger}}</a></li>
+                        <li><a href="#" class="has-text-link subtitle is-7"> {{arranger.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -48,7 +48,7 @@
                         ボーカロイド
                         {% for performer in performers %}
                         <div class="card is-shadowless">
-                            <li><a href="#" class="has-text-link subtitle is-7"> {{performer}}</a></li>
+                            <li><a href="#" class="has-text-link subtitle is-7"> {{performer.artist_name}}</a></li>
                         </div>
                         {% endfor %}
                     </ul>
@@ -59,8 +59,8 @@
                         アーティスト
                         {% for performer in performers %}
                         <div class="card is-shadowless">
-                            <li>&emsp;-<a href="#" class="has-text-link subtitle is-6">
-                                    {{performer}}</a></li>
+                            <li><a href="#" class="has-text-link subtitle is-7">
+                                    {{performer.artist_name}}</a></li>
                         </div>
                         {% endfor %}
                     </ul>
@@ -69,10 +69,12 @@
             </div>
             <div class="columns is-6">
                 <div class="column is-offset-2">
-                    最低音：<a href="#" class="tag {{ lowest_note.pk | color }} is-large">{{lowest_note}}</a>
+                    最低音：<a href="{% url 'ranges:result_range' lowest_note.pk %}"
+                        class="tag {{ lowest_note.pk | color }} is-large">{{lowest_note}}</a>
                 </div>
                 <div class="column is-5 is-offset-1">
-                    最高音：<a href="#" class="tag {{ highest_note.pk | color }} is-large"> {{highest_note}}</a>
+                    最高音：<a href="{% url 'ranges:result_range' highest_note.pk %}"
+                        class="tag {{ highest_note.pk | color }} is-large"> {{highest_note}}</a>
                 </div>
             </div>
         </div>
@@ -80,7 +82,7 @@
     <div class="hero-footer">
         <div class="column">
             <ul>
-                <li>ジャンル：<a href="#">{{genre}}</a></li>
+                <li>ジャンル：<a href="#">{{genre.genre_name}}</a></li>
                 {% if release %}
                 <li>リリース：{{release}}</li>
                 {% endif %}

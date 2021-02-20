@@ -11,17 +11,36 @@ class Artist(models.Model):
     def __str__(self):
         return self.artist_name
 
+    class Meta:
+        ordering = ('artist_name', )
+
 
 class Song(models.Model):
-    song_id = models.CharField(max_length=10, primary_key=True)
-    song_name = models.CharField("song's tilte", max_length=100)
+    class Meta:
+        ordering = ('song_name',)
+        
+    song_id = models.AutoField(primary_key=True)
+    song_name = models.CharField("Tilte", max_length=100)
     composer = models.ManyToManyField(Artist, related_name="composer_name")
     lyricist = models.ManyToManyField(Artist, related_name="lyricist_name")
     arranger = models.ManyToManyField(
         Artist, related_name="arranger_name", null=True, blank=True)
 
     def __str__(self):
-        return self.song_name
+        return self.song_name+': '+",".join([a.artist_name for a in self.composer.all()])
+
+    def get_composer(self):
+        return "\n".join([a.artist_name for a in self.composer.all()])
+
+    def get_lyricist(self):
+        return "\n".join([a.artist_name for a in self.lyricist.all()])
+
+    def get_arranger(self):
+        return "\n".join([a.artist_name for a in self.arranger.all()])
+
+    get_composer.short_description = 'Composer'
+    get_lyricist.short_description = 'Lyricist'
+    get_arranger.short_description = 'Arranger'
 
 
 
@@ -65,6 +84,3 @@ class Range(models.Model):
 
     class Meta:
         unique_together = ['song', 'artist']
-
-    def get_query_release(self):
-        return Range.objects.order_by('-release_date')[:3]

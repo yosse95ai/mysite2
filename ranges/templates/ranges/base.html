@@ -64,18 +64,18 @@
 				</form>
 				<p class="menu-label">MENU</p>
 				<ul class="menu-list">
-					<li>
-						<a href="{% url 'ranges:search' %}">
+					<li class="menu-content">
+						<a href="{% url 'ranges:search' %}#artist">
 							<i class="fas fa-users"></i> アーティストで検索 <i class="fas fa-chevron-right"></i>
 						</a>
 					</li>
-					<li>
-						<a href="{% url 'ranges:search' %}">
+					<li class="menu-content">
+						<a href="{% url 'ranges:search' %}#note">
 							<i class="fas fa-chart-bar"></i> 音域で検索 <i class="fas fa-chevron-right"></i>
 						</a>
 					</li>
-					<li>
-						<a href="{% url 'ranges:search' %}">
+					<li class="menu-content">
+						<a href="{% url 'ranges:search' %}#genre">
 							<i class="fas fa-tags"></i> ジャンルで検索 <i class="fas fa-chevron-right"></i>
 						</a>
 					</li>

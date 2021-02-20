@@ -7,6 +7,7 @@
 
 {% block content %}
 <div class="box">
+    {# search for Range #}
     {% if range_error or song_error or range_note_error %}
     <div class="columns">
         {% if range_error %}
@@ -30,11 +31,11 @@
         <div class="level-left">
             <div class="column">
                 <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
-                    class="title is-5 has-text-info">{{result.song}}</a>
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist }}</a></div>
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
             </div>
         </div>
         <div class="level-right">
@@ -58,6 +59,7 @@
     </div>
     {######}{% endif %}
     {##}{% endfor %}
+    {# search for Note #}
     {% elif high_ranges or low_ranges %}
     {##}{% if high_ranges %}
     {######}{% for result in high_ranges %}
@@ -65,11 +67,11 @@
         <div class="level-left">
             <div class="column">
                 <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
-                    class="title is-5 has-text-info">{{result.song}}</a>
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist }}</a></div>
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
             </div>
         </div>
         <div class="level-right">
@@ -94,11 +96,11 @@
         <div class="level-left">
             <div class="column">
                 <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
-                    class="title is-5 has-text-info">{{result.song}}</a>
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist }}</a></div>
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
             </div>
         </div>
         <div class="level-right">

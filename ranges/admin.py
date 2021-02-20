@@ -6,8 +6,9 @@ class RangeAdmin(admin.ModelAdmin):
     filter_horizontal = ('performer',)
 
 class SongAdmin(admin.ModelAdmin):
-    filter_horizontal = ('composer','lyricist','arranger')
-    list_display = ('song_name',)
+    filter_horizontal = ('composer', 'lyricist', 'arranger')
+    list_display = ('song_name', 'get_composer',
+                    'get_lyricist', 'get_arranger',)
 
 
 admin.site.register(Note)

@@ -1,23 +1,30 @@
 {% extends './base.html' %}
-{% load note_color %}
+{% load note_control %}
 {% block title %}検索ページ{% endblock title %}
-{% block page_name %}Fell Free to Search{% endblock page_name %}
+{% block page_name %}Feel Free to Search{% endblock page_name %}
 {% comment %} メインコンテンツ {% endcomment %}
 {% block content %}
 <div class="box">
     <div class="tabs is-centered">
         <ul class="tab-group">
-            <li class="tab is-active"><a>アーティスト検索</a></li>
-            <li class="tab"><a>音域検索</a></li>
-            <li class="tab"><a>ジャンル検索</a></li>
+            <li class="tab is-active" name="artist"><a>アーティスト検索</a></li>
+            <li class="tab" name="note"><a>音域検索</a></li>
+            <li class="tab" name="genre"><a>ジャンル検索</a></li>
         </ul>
     </div>
     <div class="">
         <div class="panel-content is-show">
             artist
         </div>
-        <div class="panel-content">
-            range
+        <div class="panel-content tags are-medium">
+            <p class="title has-text-dark">登録のあるキー</p>
+            {% for note in notes_list %}
+            <a href="{% url 'ranges:result_range' note.pk %}">
+                <div class="tag {{ note.pk | color }}">
+                    {{ note }}
+                </div>
+            </a>
+            {% endfor %}
         </div>
         <div class="panel-content">
             genre

@@ -27,9 +27,9 @@ def makeNoteTable(lh=3):
 
 
 def noteToNumber(note_id):
-    keys = {'C': 0, 'CS': 1, 'D': 2, 'DS': 3,
-            'E': 4, 'F': 5, 'FS': 6, 'G': 7,
-            'GS': 8, 'A': 9, 'AS': 10, 'B': 11}
+    keys = {'C': 3, 'CS': 4, 'D': 5, 'DS': 6,
+            'E': 7, 'F': 8, 'FS': 9, 'G': 10,
+            'GS': 11, 'A': 0, 'AS': 1, 'B': 2}
     prefs = {'H': 1, 'M': 0, 'L': -1}
     p = prefs[note_id[:1]]
     n = int(note_id[1:2])
@@ -51,14 +51,15 @@ def getMaleKey(note_id):
 
 
 def numberToNote(number):
-    keys = {0: 'C', 1: 'CS', 2: 'D', 3: 'DS',
-            4: 'E', 5: 'F', 6: 'FS', 7: 'G',
-            8: 'GS', 9: 'A', 10: 'AS', 11: 'B'}
+    keys = {0: 'A', 1: 'AS', 2: 'B', 3: 'C',
+            4: 'CS', 5: 'D', 6: 'DS', 7: 'E',
+            8: 'F', 9: 'FS', 10: 'G', 11: 'GS', }
     prefs = {1: 'H', 0: 'M', -1: 'L'}
     pref = int(number / 12)
     key = number % 12
-    if pref < 0:
+    if number < 0:
         p = prefs[-1]
+        pref = int((number+1) / 12)
         n = -1 * pref + 1
     elif pref < 2:
         p = prefs[0]
