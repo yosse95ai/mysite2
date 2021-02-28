@@ -10,7 +10,6 @@ def marger(P, pref, loop=2):
                 keyname = pref * (i + 1) + key
             else:
                 keyname = pref + str(i+1) + key
-            # print(pk, ':', keyname)
             note[pk] = keyname
     return note
 

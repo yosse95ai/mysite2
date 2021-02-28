@@ -53,11 +53,11 @@ class Note(models.Model):
 
 
 class Genre(models.Model):
-    jenre_id = models.CharField(max_length=5, primary_key=True)
-    jenre_name = models.CharField(max_length=50)
+    genre_id = models.CharField(max_length=5, primary_key=True)
+    genre_name = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.jenre_name
+        return self.genre_name
 
 
 class Range(models.Model):

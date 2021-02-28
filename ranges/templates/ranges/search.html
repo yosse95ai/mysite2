@@ -12,23 +12,31 @@
             <li class="tab" name="genre"><a>ジャンル検索</a></li>
         </ul>
     </div>
-    <div class="">
-        <div class="panel-content is-show">
-            artist
-        </div>
-        <div class="panel-content tags are-medium">
-            <p class="title has-text-dark">登録のあるキー</p>
-            {% for note in notes_list %}
-            <a href="{% url 'ranges:result_range' note.pk %}">
-                <div class="tag {{ note.pk | color }}">
-                    {{ note }}
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        <div class="panel-content">
-            genre
-        </div>
+    {# search by artist_name #}
+    <div class="panel-content is-show">
+        artist
+    </div>
+    {# search by note_name #}
+    <div class="panel-content tags are-medium">
+        <p class="title has-text-dark">登録のあるキー</p>
+        {% for note in notes_list %}
+        <a href="{% url 'ranges:result_range' note.pk %}">
+            <div class="tag {{ note.pk | color }}">
+                {{ note }}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {# search by genre_name #}
+    <div class="panel-content tags are-medium">
+        <p class="title has-text-dark">登録のあるジャンル</p>
+        {% for genre in genre_list %}
+        <a href="{% url 'ranges:result_genre' genre.pk %}">
+            <div class="tag {{ genre.pk | color }}">
+                {{ genre }}
+            </div>
+        </a>
+        {% endfor %}
     </div>
 </div>
 {% endblock content %}

@@ -12,18 +12,20 @@
     <div class="columns">
         {% if range_error %}
         <div class="column subtitle">
-            <i class="fas fa-chevron-right"></i>{{input_name}}
-            <a href="#" class="has-text-danger">を音域データベースに登録しませんか？</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="#" class="has-text-dark">
+                <span class="has-text-danger">{{input_name}}</span>の音域の登録に協力してくれませんか？</a>
         </div>
         {% elif song_error %}
         <div class="column subtitle">
-            <i class="fas fa-chevron-right"></i>{{input_name}}
-            <a href="#" class="has-text-danger">を曲データベースに登録しませんか？</a>
+            <i class="fas fa-chevron-right"></i><a href="#" class="has-text-dark">
+                <span class="has-text-danger">{{input_name}}</span>
+                を曲データベースに登録しませんか？</a>
         </div>
         {% endif %}
     </div>
     <div class="content has-text-grey-light">
-        検索結果：0件
+        検索結果：0件{{range_note_error}}
     </div>
     {% elif results %}
     {##}{% for result in results %}
@@ -59,6 +61,23 @@
     </div>
     {######}{% endif %}
     {##}{% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if results.has_previous %}
+            <a href="{% url 'ranges:result' input_name %}?page=1">&laquo; first</a>
+            <a href="{% url 'ranges:result' input_name %}?page={{ results.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ results.number }} of {{ results.paginator.num_pages }}.
+            </span>
+
+            {% if results.has_next %}
+            <a href="{% url 'ranges:result' input_name %}?page={{ results.next_page_number }}">next</a>
+            <a href="{% url 'ranges:result' input_name %}?page={{ results.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
     {# search for Note #}
     {% elif high_ranges or low_ranges %}
     {##}{% if high_ranges %}
@@ -123,6 +142,41 @@
     <div class="content has-text-grey-light">
         検索結果：{{h_num|add:l_num}}件
     </div>
+    {# search for Genre #}
+    {% elif range_list %}
+    {##}{% for result in range_list %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {######}{% if forloop.last %}
+    <div class="content has-text-grey-light">
+        検索結果：{{forloop.counter}}件
+    </div>
+    {######}{% endif %}
+    {##}{% endfor %}
     {% endif %}
 </div>
 {% endblock content %}

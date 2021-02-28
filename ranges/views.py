@@ -4,13 +4,29 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.http import HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import Range, Artist, Song, Note
+from .models import Range, Artist, Song, Note, Genre
 from .templatetags import noteBar as nb
 
 
 def queryError(error_name, input_name=None):
     return {error_name: True, 'input_name': input_name}
+
+
+def paginate_query(request, queryset, count):
+    '''
+    ページネーション用に、Pageオブジェクトを返す。
+    '''
+    paginator = Paginator(queryset, count)
+    page = request.GET.get('page')
+    try:
+        page_obj = paginator.page(page)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginatot.page(paginator.num_pages)
+    return page_obj
 
 
 def index(request):
@@ -22,7 +38,11 @@ def index(request):
     }
     return render(request, 'ranges/index.html', context)
 
+
 def detail(request, artist_pk, song_pk):
+    '''
+    responsed range-detail
+    '''
     try:
         artist = Artist.objects.get(pk=artist_pk)
         song = Song.objects.get(pk=song_pk)
@@ -46,38 +66,56 @@ def detail(request, artist_pk, song_pk):
         release = target.release_date
         genre = target.genre
         context = {
-            'artist': artist,
-            'song': song_name,
+            'artist_name': artist,
+            'song_name': song_name,
             'composers': composers,
             'lyricists': lyricists,
             'arrangers': arrangers,
             'highest_note': highest_note,
             'lowest_note': lowest_note,
-            'target': target,
             'performers': performers,
-            'genre': genre,
+            'genre_name': genre,
             'release': release,
         }
+        if target.fake_note:
+            fake_note = Note.objects.get(pk=target.fake_note.pk)
+            context['fake_note'] = fake_note
     return render(request, 'ranges/detail.html', context)
 
+
 def search(request):
+    '''
+    search for song name
+    '''
     notes_list = Note.objects.all()
-    note_list=list()
+    genres_list = Genre.objects.all()
+    note_list = list()
+    genre_list = list()
     for note in notes_list:
         if Range.objects.filter(highest_note=note.pk) or Range.objects.filter(lowest_note=note.pk):
             note_list.append(nb.noteToNumber(note.pk))
-    ordered_note=list()
+    ordered_note = list()
     for note_n in sorted(note_list):
         pk = nb.numberToNote(note_n)
         ordered_note.append(notes_list.get(note_id=pk))
+    for genre in genres_list:
+        if Range.objects.filter(genre=genre.pk):
+            genre_list.append(genre)
     content = {
-        'notes_list': ordered_note
+        'notes_list': ordered_note,
+        'genre_list': genre_list
     }
     return render(request, 'ranges/search.html', content)
 
 
-def result(request):
-    input_name = request.POST['song_name']
+def result(request, in_name=''):
+    '''
+    search for song-range
+    '''
+    if request.method == 'POST':
+        input_name = request.POST['song_name']
+    else:
+        input_name = in_name
     results = list()
     songs = Song.objects.filter(song_name=input_name)
     if not songs:
@@ -89,24 +127,39 @@ def result(request):
                 context = queryError('range_error', input_name=input_name)
             else:
                 results += result
-                context = {
-                    'results': results,
-                    'input_name': input_name,
-                }
+        page_results = paginate_query(request, results, 10)
+        context = {
+            'results': page_results,
+            'input_name': input_name,
+        }
     return render(request, 'ranges/result.html', context)
 
 
 def result_range(request, note_pk):
+    '''
+    search for registared note list
+    '''
     high_ranges = Range.objects.filter(highest_note=note_pk)
     low_ranges = Range.objects.filter(lowest_note=note_pk)
     if not high_ranges and not low_ranges:
-        context=queryError('range_note_error')
+        context = queryError('range_note_error')
     else:
         context = {
             'high_ranges': high_ranges,
             'low_ranges': low_ranges,
-            'input_name': get_object_or_404(Note, pk=note_pk).note_name,
-            'h_num': Range.objects.filter(highest_note=note_pk).count(),
-            'l_num': Range.objects.filter(lowest_note=note_pk).count(),
+            'input_name': Note.objects.get(pk=note_pk).note_name,
+            'h_num': high_ranges.count(),
+            'l_num': low_ranges.count(),
         }
+    return render(request, 'ranges/result.html', context)
+
+
+def result_genre(request, genre_pk):
+    is_regist_genre = Range.objects.filter(genre=genre_pk)
+    if not is_regist_genre:
+        context = queryError('genre_error')
+    context = {
+        'range_list': is_regist_genre,
+        'input_name': Genre.objects.get(pk=genre_pk),
+    }
     return render(request, 'ranges/result.html', context)
