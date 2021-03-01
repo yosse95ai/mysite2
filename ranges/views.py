@@ -1,10 +1,9 @@
-from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 from .models import Range, Artist, Song, Note, Genre
 from .templatetags import noteBar as nb
@@ -127,7 +126,7 @@ def result(request, in_name=''):
                 context = queryError('range_error', input_name=input_name)
             else:
                 results += result
-        page_results = paginate_query(request, results, 1)
+        page_results = paginate_query(request, results, 10)
         context = {
             'results': page_results,
             'input_name': input_name,
@@ -139,17 +138,15 @@ def result_range(request, note_pk):
     '''
     search for registared note list
     '''
-    high_ranges = Range.objects.filter(highest_note=note_pk)
-    low_ranges = Range.objects.filter(lowest_note=note_pk)
-    if not high_ranges and not low_ranges:
+    ranges = Range.objects.filter(
+        Q(highest_note=note_pk) | Q(lowest_note=note_pk))
+    if not ranges:
         context = queryError('range_note_error')
     else:
+        note_ranges = paginate_query(request, ranges, 10)
         context = {
-            'high_ranges': high_ranges,
-            'low_ranges': low_ranges,
+            'note_ranges': note_ranges,
             'input_name': Note.objects.get(pk=note_pk).note_name,
-            'h_num': high_ranges.count(),
-            'l_num': low_ranges.count(),
         }
     return render(request, 'ranges/result.html', context)
 
@@ -158,8 +155,9 @@ def result_genre(request, genre_pk):
     is_regist_genre = Range.objects.filter(genre=genre_pk)
     if not is_regist_genre:
         context = queryError('genre_error')
+    genre_list = paginate_query(request, is_regist_genre, 10)
     context = {
-        'range_list': is_regist_genre,
+        'genre_list': genre_list,
         'input_name': Genre.objects.get(pk=genre_pk),
     }
     return render(request, 'ranges/result.html', context)

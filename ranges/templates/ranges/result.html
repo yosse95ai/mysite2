@@ -25,7 +25,7 @@
         {% endif %}
     </div>
     <div class="content has-text-grey-light">
-        検索結果：0件{{range_note_error}}
+        検索結果：0件
     </div>
     {% elif results %}
     {##}{% for result in results %}
@@ -55,12 +55,10 @@
             </div>
         </div>
     </div>
-    {######}{% if forloop.last %}
-    <div class="content has-text-grey-light">
-        検索結果：{{ results.paginator.num_pages }}件
-    </div>
-    {######}{% endif %}
     {##}{% endfor %}
+    <div class="content has-text-grey-light">
+        検索結果：{{ results.paginator.count }}件
+    </div>
     <nav class="pagination is-centered" role="navigation" aria-label="pagination">
         {% if results.has_previous %}
         <a class="pagination-previous" href="{% url 'ranges:result' input_name %}?page=1">
@@ -91,9 +89,8 @@
         </ul>
     </nav>
     {# search for Note #}
-    {% elif high_ranges or low_ranges %}
-    {##}{% if high_ranges %}
-    {######}{% for result in high_ranges %}
+    {% elif note_ranges %}
+    {##}{% for result in note_ranges %}
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
@@ -120,75 +117,97 @@
             </div>
         </div>
     </div>
-    {######}{% endfor %}
-    {##}{% elif low_ranges %}
-    {######}{% for result in low_ranges %}
-    <div class="columns level is-gapless">
-        <div class="level-left">
-            <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
-                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
-            </div>
-            <div class="columns is-mobile">
-                <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
-            </div>
-        </div>
-        <div class="level-right">
-            <div class="column tags are-medium">
-                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
-                    <div class="tag {{ result.lowest_note.pk | color }}">
-                        {{ result.lowest_note }}
-                    </div>
-                </a>
-                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
-                    <div class="tag {{ result.highest_note.pk | color }}">
-                        {{ result.highest_note }}
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    {######}{% endfor %}
-    {##}{% endif %}
-    <div class="content has-text-grey-light">
-        検索結果：{{h_num|add:l_num}}件
-    </div>
-    {# search for Genre #}
-    {% elif range_list %}
-    {##}{% for result in range_list %}
-    <div class="columns level is-gapless">
-        <div class="level-left">
-            <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
-                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
-            </div>
-            <div class="columns is-mobile">
-                <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
-            </div>
-        </div>
-        <div class="level-right">
-            <div class="column tags are-medium">
-                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
-                    <div class="tag {{ result.lowest_note.pk | color }}">
-                        {{ result.lowest_note }}
-                    </div>
-                </a>
-                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
-                    <div class="tag {{ result.highest_note.pk | color }}">
-                        {{ result.highest_note }}
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    {######}{% if forloop.last %}
-    <div class="content has-text-grey-light">
-        検索結果：{{forloop.counter}}件
-    </div>
-    {######}{% endif %}
     {##}{% endfor %}
+    <div class="content has-text-grey-light">
+        検索結果：{{note_ranges.paginator.count }}件
+    </div>
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+        {% if note_ranges.has_previous %}
+        <a class="pagination-previous" href="?page=1">
+            <i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i></a>
+        {% endif %}
+        {% if note_ranges.has_next %}
+        <a class="pagination-next" href="?page={{ note_ranges.paginator.num_pages }}">
+            <i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i></a>
+        {% endif %}
+        <ul class="pagination-list">
+            <li>
+                {% if note_ranges.has_previous %}
+                <a class="pagination-previous" href="?page={{ note_ranges.previous_page_number }}">
+                    <i class="fas fa-chevron-left"></i></a>
+                {% endif %}
+            </li>
+            <li><a class="pagination-link is-current" aria-label="Page {{ note_ranges.number }}"
+                    aria-current="page">{{ note_ranges.number }}</a>
+            </li>
+            <li>
+                {% if note_ranges.has_next %}
+                <a class="pagination-next" href="?page={{ note_ranges.next_page_number }}">
+                    <i class="fas fa-chevron-right"></i></a>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+    {# search for Genre #}
+    {% elif genre_list %}
+    {##}{% for result in genre_list %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {##}{% endfor %}
+    <div class="content has-text-grey-light">
+        検索結果：{{genre_list.paginator.count}}件
+    </div>
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+        {% if genre_list.has_previous %}
+        <a class="pagination-previous" href="?page=1">
+            <i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i></a>
+        {% endif %}
+        {% if genre_list.has_next %}
+        <a class="pagination-next" href="?page={{ genre_list.paginator.num_pages }}">
+            <i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i></a>
+        {% endif %}
+        <ul class="pagination-list">
+            <li>
+                {% if genre_list.has_previous %}
+                <a class="pagination-previous" href="?page={{ genre_list.previous_page_number }}">
+                    <i class="fas fa-chevron-left"></i></a>
+                {% endif %}
+            </li>
+            <li><a class="pagination-link is-current" aria-label="Page {{ genre_list.number }}"
+                    aria-current="page">{{ genre_list.number }}</a>
+            </li>
+            <li>
+                {% if genre_list.has_next %}
+                <a class="pagination-next" href="?page={{ genre_list.next_page_number }}">
+                    <i class="fas fa-chevron-right"></i></a>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
     {% endif %}
 </div>
 {% endblock content %}
