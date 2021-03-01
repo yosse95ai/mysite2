@@ -127,7 +127,7 @@ def result(request, in_name=''):
                 context = queryError('range_error', input_name=input_name)
             else:
                 results += result
-        page_results = paginate_query(request, results, 10)
+        page_results = paginate_query(request, results, 1)
         context = {
             'results': page_results,
             'input_name': input_name,
