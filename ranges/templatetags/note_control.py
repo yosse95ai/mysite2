@@ -8,9 +8,9 @@ register = template.Library()  # Djangoのテンプレートタグライブラ�
 @register.filter
 def color(pk):
     if pk.startswith('H4'):
-        return 'is-danger'
+        return 'is-dark'
     elif pk.startswith('H3'):
-        return 'is-danger is-light'
+        return 'is-danger '
     elif pk.startswith('H2'):
         return 'is-danger is-light'
     elif pk.startswith('H1'):

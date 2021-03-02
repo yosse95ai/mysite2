@@ -9,6 +9,10 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('search-result/song/', views.result, name='result'),
     path('search-result/song/<slug:in_name>', views.result, name='result'),
-    path('search-result/range-<slug:note_pk>', views.result_range, name='result_range'),
-    path('search-result/genre-<slug:genre_pk>',views.result_genre,name='result_genre'),
+    path('search-result/range-<slug:note_pk>',
+         views.result_range, name='result_range'),
+    path('search-result/genre-<slug:genre_pk>',
+         views.result_genre, name='result_genre'),
+    path('search-result/all',
+         views.result_all, name='result_all'),
 ]

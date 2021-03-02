@@ -110,13 +110,17 @@ def search(request):
 def result(request, in_name=''):
     '''
     search for song-range
+    大文字小文字区別なし検索
+    かつ
+    文字列始まり検索
     '''
     if request.method == 'POST':
         input_name = request.POST['song_name']
     else:
         input_name = in_name
     results = list()
-    songs = Song.objects.filter(song_name=input_name)
+    songs = Song.objects.filter(
+        song_name__istartswith=input_name).order_by('song_name')
     if not songs:
         context = queryError('song_error', input_name=input_name)
     else:
@@ -139,7 +143,7 @@ def result_range(request, note_pk):
     search for registared note list
     '''
     ranges = Range.objects.filter(
-        Q(highest_note=note_pk) | Q(lowest_note=note_pk))
+        Q(highest_note=note_pk) | Q(lowest_note=note_pk)).order_by('highest_note')
     if not ranges:
         context = queryError('range_note_error')
     else:
@@ -152,12 +156,23 @@ def result_range(request, note_pk):
 
 
 def result_genre(request, genre_pk):
-    is_regist_genre = Range.objects.filter(genre=genre_pk)
+    is_regist_genre = Range.objects.filter(
+        genre=genre_pk).order_by('highest_note')
     if not is_regist_genre:
         context = queryError('genre_error')
     genre_list = paginate_query(request, is_regist_genre, 10)
     context = {
         'genre_list': genre_list,
         'input_name': Genre.objects.get(pk=genre_pk),
+    }
+    return render(request, 'ranges/result.html', context)
+
+
+def result_all(request):
+    all_cont = Range.objects.all().order_by('song','-artist')
+    all_cont_list = paginate_query(request, all_cont, 10)
+    context = {
+        'all_range': all_cont_list,
+        'input_name': 'Search All'
     }
     return render(request, 'ranges/result.html', context)
