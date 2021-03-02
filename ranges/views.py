@@ -111,8 +111,7 @@ def result(request, in_name=''):
     '''
     search for song-range
     大文字小文字区別なし検索
-    かつ
-    文字列始まり検索
+    かつ 文字列始まり検索
     '''
     if request.method == 'POST':
         input_name = request.POST['song_name']
