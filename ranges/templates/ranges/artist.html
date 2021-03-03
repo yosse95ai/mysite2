@@ -7,7 +7,7 @@
 {% block content %}
 <div class="box">
     {% if contents %}
-    <p class="title has-text-dark">持ち曲</p>
+    <p class="title has-text-grey">持ち曲</p>
     {##}{% for result in contents %}
     <div class="columns level is-gapless">
         <div class="level-left">
@@ -17,7 +17,8 @@
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+                    <a href="{% url 'ranges:detail_artist' result.artist.pk %}"
+                        class="title is-6">{{ result.artist.artist_name }}</a></div>
             </div>
         </div>
         <div class="level-right">
@@ -38,7 +39,7 @@
     {##}{% endfor %}
     {% endif %}
     {% if has_songs %}
-    <p class="title has-text-dark">手掛けた曲</p>
+    <p class="title has-text-grey">手掛けた曲</p>
     {##}{% for result in has_song_list %}
     <div class="columns level is-gapless">
         <div class="level-left">
@@ -48,7 +49,8 @@
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+                    <a href="{% url 'ranges:detail_artist' result.artist.pk %}"
+                        class="title is-6">{{ result.artist.artist_name }}</a></div>
             </div>
         </div>
         <div class="level-right">
@@ -69,7 +71,7 @@
     {##}{% endfor %}
     {% endif %}
     {% if not_regist_list %}
-    <p class="title has-text-dark">音域未登録曲</p>
+    <p class="subtitle has-text-grey">-音域未登録曲-</p>
     {% for result in not_regist_list %}
     <div class="columns level is-gapless">
         <div class="column">

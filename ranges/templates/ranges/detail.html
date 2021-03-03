@@ -106,7 +106,7 @@
                 {% if is_original %}
                 <li>キー：±0</li>
                 {% else %}
-                <li>キー：{{diff}}</li>
+                <li>キー：{{ diff | key_up_down }}</li>
                 {% endif %}
                 <li>ジャンル：<a href="{% url 'ranges:result_genre' genre_name.pk%}">{{genre_name}}</a></li>
                 {% if release %}

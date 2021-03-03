@@ -105,6 +105,8 @@ def detail_artist(request, artist_pk):
             s = Range.objects.get(song=song.pk, origin=True)
         except Range.DoesNotExist:
             not_regist_list.append(song)
+        except Range.MultipleObjectsReturned:
+            pass
         else:
             has_song_list.append(s)
     context = {
