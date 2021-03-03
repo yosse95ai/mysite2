@@ -20,7 +20,8 @@
                     <ul class="subtitle is-5">
                         作曲
                         {% for composer in composers %}
-                        <li><a href="#" class="has-text-link subtitle is-7"> {{composer.artist_name}}</a></li>
+                        <li><a href="{% url 'ranges:detail_artist' composer.pk %}" class="has-text-link subtitle is-7">
+                                {{composer.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -28,7 +29,8 @@
                     <ul class="subtitle is-5">
                         作詞
                         {% for lyricist in lyricists %}
-                        <li><a href="#" class="has-text-link subtitle is-7"> {{lyricist.artist_name}}</a></li>
+                        <li><a href="{% url 'ranges:detail_artist' lyricist.pk %}" class="has-text-link subtitle is-7">
+                                {{lyricist.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -37,18 +39,20 @@
                     <ul class="subtitle is-5">
                         編曲
                         {% for arranger in arrangers %}
-                        <li><a href="#" class="has-text-link subtitle is-7"> {{arranger.artist_name}}</a></li>
+                        <li><a href="{% url 'ranges:detail_artist' arranger.pk %}" class="has-text-link subtitle is-7">
+                                {{arranger.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
                 {% endif %}
-                {% if genre.pk == "VC" %}
+                {% if genre_name.pk == "VC" %}
                 <div class="column">
                     <ul class="subtitle is-5">
                         ボーカロイド
                         {% for performer in performers %}
                         <div class="card is-shadowless">
-                            <li><a href="#" class="has-text-link subtitle is-7"> {{performer.artist_name}}</a></li>
+                            <li><a href="{% url 'ranges:detail_artist' performer.pk %}"
+                                    class="has-text-link subtitle is-7"> {{performer.artist_name}}</a></li>
                         </div>
                         {% endfor %}
                     </ul>
@@ -59,7 +63,8 @@
                         アーティスト
                         {% for performer in performers %}
                         <div class="card is-shadowless">
-                            <li><a href="#" class="has-text-link subtitle is-7">
+                            <li><a href="{% url 'ranges:detail_artist' performer.pk %}"
+                                    class="has-text-link subtitle is-7">
                                     {{performer.artist_name}}</a></li>
                         </div>
                         {% endfor %}
@@ -98,7 +103,12 @@
     <div class="hero-footer">
         <div class="column">
             <ul>
-                <li>ジャンル：<a href="{% url 'ranges:search' %}#genre">{{genre_name}}</a></li>
+                {% if is_original %}
+                <li>キー：±0</li>
+                {% else %}
+                <li>キー：{{diff}}</li>
+                {% endif %}
+                <li>ジャンル：<a href="{% url 'ranges:result_genre' genre_name.pk%}">{{genre_name}}</a></li>
                 {% if release %}
                 <li>リリース：{{release}}</li>
                 {% endif %}

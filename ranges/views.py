@@ -64,6 +64,7 @@ def detail(request, artist_pk, song_pk):
         performers = target.performer.all()
         release = target.release_date
         genre = target.genre
+        is_original = target.origin
         context = {
             'artist_name': artist,
             'song_name': song_name,
@@ -75,11 +76,45 @@ def detail(request, artist_pk, song_pk):
             'performers': performers,
             'genre_name': genre,
             'release': release,
+            'is_original': is_original,
         }
         if target.fake_note:
             fake_note = Note.objects.get(pk=target.fake_note.pk)
             context['fake_note'] = fake_note
+        if not is_original:
+            this_key = nb.noteToNumber(highest_note.pk)
+            origin = Range.objects.get(song=song_pk, origin=True)
+            if origin:
+                origin_key = nb.noteToNumber(origin.highest_note.pk)
+                context['diff'] = this_key-origin_key
     return render(request, 'ranges/detail.html', context)
+
+
+def detail_artist(request, artist_pk):
+    '''
+    responsed artist-detail
+    '''
+    artist = Artist.objects.get(pk=artist_pk)
+    artist_contents = Range.objects.filter(performer=artist)
+    has_songs = Song.objects.filter(Q(composer=artist_pk) | Q(
+        lyricist=artist_pk) | Q(arranger=artist_pk)).distinct()
+    has_song_list = list()
+    not_regist_list=list()
+    for song in has_songs:
+        try:
+            s = Range.objects.get(song=song.pk, origin=True)
+        except Range.DoesNotExist:
+            not_regist_list.append(song)
+        else:
+            has_song_list.append(s)
+    context = {
+        'has_songs': has_songs,
+        'contents': artist_contents,
+        'input_name': artist,
+        'has_song_list': has_song_list,
+        'not_regist_list':not_regist_list,
+    }
+    return render(request, 'ranges/artist.html', context)
 
 
 def search(request):
@@ -168,7 +203,7 @@ def result_genre(request, genre_pk):
 
 
 def result_all(request):
-    all_cont = Range.objects.all().order_by('song','-artist')
+    all_cont = Range.objects.all().order_by('song', '-artist')
     all_cont_list = paginate_query(request, all_cont, 10)
     context = {
         'all_range': all_cont_list,

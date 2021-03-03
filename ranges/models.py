@@ -7,6 +7,8 @@ from django.utils import timezone
 class Artist(models.Model):
     artist_id = models.CharField(max_length=10, primary_key=True)
     artist_name = models.CharField("Artist's name", max_length=50)
+    affiliation = models.ManyToManyField(
+        "self",related_name="affiliation", null=True, blank=True)
 
     def __str__(self):
         return self.artist_name
@@ -18,7 +20,7 @@ class Artist(models.Model):
 class Song(models.Model):
     class Meta:
         ordering = ('song_name',)
-        
+
     song_id = models.AutoField(primary_key=True)
     song_name = models.CharField("Tilte", max_length=100)
     composer = models.ManyToManyField(Artist, related_name="composer_name")
@@ -41,7 +43,6 @@ class Song(models.Model):
     get_composer.short_description = 'Composer'
     get_lyricist.short_description = 'Lyricist'
     get_arranger.short_description = 'Arranger'
-
 
 
 class Note(models.Model):
@@ -76,10 +77,11 @@ class Range(models.Model):
     release_date = models.DateTimeField('date released', null=True, blank=True)
     pub_date = models.DateTimeField(default=timezone.now())
     latest_update = models.DateTimeField('date update lately', auto_now=True)
+    origin = models.BooleanField('is original', default=True)
 
     def __str__(self):
         s_name = Song.objects.get(pk=self.song_id)
-        a_name=Artist.objects.get(pk=self.artist_id)
+        a_name = Artist.objects.get(pk=self.artist_id)
         return s_name.song_name+'/'+a_name.artist_name
 
     class Meta:
