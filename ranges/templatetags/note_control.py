@@ -1,5 +1,7 @@
 from django import template
 
+from . import noteBar as nb
+
 register = template.Library()  # Djangoのテンプレートタグライブラリ
 
 # カスタムフィルタとして登録する

@@ -4,3 +4,88 @@
 {% block page_name %}
 <i class="fas fa-search has-text-grey-lighter"></i><span class="has-text-grey-dark">{{input_name}}</span>
 {% endblock page_name %}
+{% block content %}
+<div class="box">
+    {% if contents %}
+    <p class="title has-text-dark">持ち曲</p>
+    {##}{% for result in contents %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {##}{% endfor %}
+    {% endif %}
+    {% if has_songs %}
+    <p class="title has-text-dark">手掛けた曲</p>
+    {##}{% for result in has_song_list %}
+    <div class="columns level is-gapless">
+        <div class="level-left">
+            <div class="column">
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                    class="title is-5 has-text-info">{{result.song.song_name}}</a>
+            </div>
+            <div class="columns is-mobile">
+                <div class="column">
+                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+            </div>
+        </div>
+        <div class="level-right">
+            <div class="column tags are-medium">
+                <a href="{% url 'ranges:result_range' result.lowest_note.pk %}">
+                    <div class="tag {{ result.lowest_note.pk | color }}">
+                        {{ result.lowest_note }}
+                    </div>
+                </a>
+                <a href="{% url 'ranges:result_range' result.highest_note.pk %}">
+                    <div class="tag {{ result.highest_note.pk | color }}">
+                        {{ result.highest_note }}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    {##}{% endfor %}
+    {% endif %}
+    {% if not_regist_list %}
+    <p class="title has-text-dark">音域未登録曲</p>
+    {% for result in not_regist_list %}
+    <div class="columns level is-gapless">
+        <div class="column">
+            <a href="#" class="title is-5 has-text-grey">{{result.song_name}}</a>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if input_name.affiliation.all %}
+    所属：
+    {% for aff in input_name.affiliation.all%}
+    {{aff}}
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock content %}
