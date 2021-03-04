@@ -12,7 +12,7 @@
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk result.origin %}"
                     class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
@@ -44,7 +44,7 @@
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk result.origin %}"
                     class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
@@ -81,13 +81,15 @@
     {% endfor %}
     {% endif %}
     {% if input_name.affiliation.all %}
-    所属：
-    {% for aff in input_name.affiliation.all%}
-    {{aff}}
-    {% if not forloop.last %}
-    ,
-    {% endif %}
-    {% endfor %}
+    <div class="content has-text-grey-light">
+        関連：
+        {% for aff in input_name.affiliation.all%}
+        {##}<a class="has-text-grey" href="{% url 'ranges:detail_artist' aff.pk %}">{{aff}}</a>
+        {##}{% if not forloop.last %}
+        ,
+        {##}{% endif %}
+        {% endfor %}
+    </div>
     {% endif %}
 </div>
 {% endblock content %}

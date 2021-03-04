@@ -38,14 +38,14 @@ def index(request):
     return render(request, 'ranges/index.html', context)
 
 
-def detail(request, artist_pk, song_pk):
+def detail(request, artist_pk, song_pk, origin=''):
     '''
     responsed range-detail
     '''
     try:
         artist = Artist.objects.get(pk=artist_pk)
         song = Song.objects.get(pk=song_pk)
-        target = Range.objects.get(song=song, artist=artist)
+        target = Range.objects.get(song=song, artist=artist, origin=origin)
         lowest_note = Note.objects.get(pk=target.lowest_note.pk)
         highest_note = Note.objects.get(pk=target.highest_note.pk)
     except Artist.DoesNotExist:
@@ -83,8 +83,11 @@ def detail(request, artist_pk, song_pk):
             context['fake_note'] = fake_note
         if not is_original:
             this_key = nb.noteToNumber(highest_note.pk)
-            origin = Range.objects.get(song=song_pk, origin=True)
-            if origin:
+            try:
+                origin = Range.objects.get(song=song_pk, origin=True)
+            except Range.DoesNotExist:
+                context['diffError'] = True
+            else:
                 origin_key = nb.noteToNumber(origin.highest_note.pk)
                 context['diff'] = this_key-origin_key
     return render(request, 'ranges/detail.html', context)
@@ -99,7 +102,7 @@ def detail_artist(request, artist_pk):
     has_songs = Song.objects.filter(Q(composer=artist_pk) | Q(
         lyricist=artist_pk) | Q(arranger=artist_pk)).distinct()
     has_song_list = list()
-    not_regist_list=list()
+    not_regist_list = list()
     for song in has_songs:
         try:
             s = Range.objects.get(song=song.pk, origin=True)
@@ -114,7 +117,7 @@ def detail_artist(request, artist_pk):
         'contents': artist_contents,
         'input_name': artist,
         'has_song_list': has_song_list,
-        'not_regist_list':not_regist_list,
+        'not_regist_list': not_regist_list,
     }
     return render(request, 'ranges/artist.html', context)
 
@@ -125,8 +128,17 @@ def search(request):
     '''
     notes_list = Note.objects.all()
     genres_list = Genre.objects.all()
+    artists_list = Artist.objects.all()
+
+    # アーティスト検索
+    artist_list = list()
+    for artist in artists_list:
+        if Range.objects.filter(artist=artist):
+            artist_list.append(artist)
+    vocaloid = Artist.objects.filter(pk__startswith='V-')
+
+    # 音域検索
     note_list = list()
-    genre_list = list()
     for note in notes_list:
         if Range.objects.filter(highest_note=note.pk) or Range.objects.filter(lowest_note=note.pk):
             note_list.append(nb.noteToNumber(note.pk))
@@ -134,12 +146,17 @@ def search(request):
     for note_n in sorted(note_list):
         pk = nb.numberToNote(note_n)
         ordered_note.append(notes_list.get(note_id=pk))
+
+    # ジャンル検索
+    genre_list = list()
     for genre in genres_list:
         if Range.objects.filter(genre=genre.pk):
             genre_list.append(genre)
     content = {
         'notes_list': ordered_note,
-        'genre_list': genre_list
+        'genre_list': genre_list,
+        'artist_list': artist_list,
+        'vcs': vocaloid,
     }
     return render(request, 'ranges/search.html', content)
 
@@ -181,7 +198,8 @@ def result_range(request, note_pk):
     ranges = Range.objects.filter(
         Q(highest_note=note_pk) | Q(lowest_note=note_pk)).order_by('highest_note')
     if not ranges:
-        context = queryError('range_note_error')
+        context = queryError('range_note_error',
+                             input_name=Note.objects.get(pk=note_pk).note_name)
     else:
         note_ranges = paginate_query(request, ranges, 10)
         context = {

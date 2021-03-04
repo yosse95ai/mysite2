@@ -24,6 +24,8 @@ def makeNoteTable(lh=3):
             note.update(marger(P, pref))
     return note
 
+# %%
+
 
 def noteToNumber(note_id):
     keys = {'C': 3, 'CS': 4, 'D': 5, 'DS': 6,
@@ -46,7 +48,7 @@ def noteDistance(note_id1, note_id2):
 
 
 def getMaleKey(note_id):
-    return noteToNumber(note_id)-5
+    return numberToNote(noteToNumber(note_id)-7)
 
 
 def numberToNote(number):
@@ -69,13 +71,24 @@ def numberToNote(number):
     return p + str(n) + keys[key]
 
 
+def maleKey(l, h):
+    print(l, '->', getMaleKey(l))
+    print(h, '->', getMaleKey(h))
+
+
+def addKey(l, h, add):
+    print(l, '->', numberToNote(noteToNumber(l)+add))
+    print(h, '->', numberToNote(noteToNumber(h)+add))
+# %%
+
+
 def main():
-    note1 = 'H2AS'
-    note2 = 'L3B'
-    print(note1, noteToNumber(note1))
-    print(numberToNote(getMaleKey(note1)),
-          noteToNumber(numberToNote(getMaleKey(note1))))
+    l = 'M1FS'
+    h = 'H1FS'
+    addKey(l, h, -4)
 
 
 if __name__ == '__main__':
     main()
+
+# %%

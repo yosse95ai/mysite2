@@ -24,7 +24,7 @@ jQuery(() => {
     // --------------------------------------------------------------
     // タブ名取得関数
     //      -サイドバー専用
-    $('.tab').click(function() {
+    $('.tab').click(function () {
         // 現在の is-active クラスを削除
         $('.is-active').removeClass('is-active');
         // クリックした tab を is-active クラスにする
@@ -36,4 +36,5 @@ jQuery(() => {
         // クリックしたタブと同じインデックス番号をもつコンテンツを表示
         $('.panel-content').eq(index).addClass('is-show');
     });
+
 });
