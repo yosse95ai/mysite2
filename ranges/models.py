@@ -23,8 +23,8 @@ class Song(models.Model):
 
     song_id = models.AutoField(primary_key=True)
     song_name = models.CharField("Tilte", max_length=100)
-    composer = models.ManyToManyField(Artist, related_name="composer_name")
     lyricist = models.ManyToManyField(Artist, related_name="lyricist_name")
+    composer = models.ManyToManyField(Artist, related_name="composer_name")
     arranger = models.ManyToManyField(
         Artist, related_name="arranger_name", null=True, blank=True)
 
@@ -40,8 +40,8 @@ class Song(models.Model):
     def get_arranger(self):
         return "\n".join([a.artist_name for a in self.arranger.all()])
 
-    get_composer.short_description = 'Composer'
     get_lyricist.short_description = 'Lyricist'
+    get_composer.short_description = 'Composer'
     get_arranger.short_description = 'Arranger'
 
 

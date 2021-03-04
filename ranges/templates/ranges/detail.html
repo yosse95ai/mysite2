@@ -18,19 +18,19 @@
             <div class="columns">
                 <div class="column">
                     <ul class="subtitle is-5">
-                        作曲
-                        {% for composer in composers %}
-                        <li><a href="{% url 'ranges:detail_artist' composer.pk %}" class="has-text-link subtitle is-7">
-                                {{composer.artist_name}}</a></li>
+                        作詞
+                        {% for lyricist in lyricists %}
+                        <li><a href="{% url 'ranges:detail_artist' lyricist.pk %}" class="has-text-link subtitle is-7">
+                                {{lyricist.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
                 <div class="column">
                     <ul class="subtitle is-5">
-                        作詞
-                        {% for lyricist in lyricists %}
-                        <li><a href="{% url 'ranges:detail_artist' lyricist.pk %}" class="has-text-link subtitle is-7">
-                                {{lyricist.artist_name}}</a></li>
+                        作曲
+                        {% for composer in composers %}
+                        <li><a href="{% url 'ranges:detail_artist' composer.pk %}" class="has-text-link subtitle is-7">
+                                {{composer.artist_name}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
