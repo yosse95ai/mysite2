@@ -32,3 +32,18 @@ def color(pk):
     else:
         return 'is-light'
 
+
+@register.filter
+def key_up_down(diff):
+    if diff < -6 and diff > -12:
+        return '＋'+str(diff+12)+' (オク下)'
+    elif diff == -6:
+        return '－6 or ＋6 (オク下)'
+    elif diff > -6 and diff < 0:
+        return '－' + str(abs(diff))
+    elif diff == 0:
+        return '±0'
+    elif diff == -12:
+        return '±0 (オク下)'
+    else:
+        return diff

@@ -2,8 +2,13 @@
 {% load note_control %}
 {% block title %}検索ページ{% endblock title %}
 {% block page_name %}Feel Free to Search{% endblock page_name %}
-{% comment %} メインコンテンツ {% endcomment %}
 {% block content %}
+{% comment %} Style {% endcomment %}
+<style>
+    .is-hide {
+        display: none;
+    }
+</style>
 <div class="box">
     <div class="tabs is-centered">
         <ul class="tab-group">
@@ -14,7 +19,38 @@
     </div>
     {# search by artist_name #}
     <div class="panel-content is-show">
-        artist
+        <form class="block">
+            <div class="search-box control columns is-mobile">
+                <label class="radio column is-2 is-offset-2">
+                    <input type="radio" name="kind" value="" checked>
+                    ALL
+                </label>
+                <label class="radio column is-3">
+                    <input type="radio" name="kind" value="ar">
+                    アーティスト
+                </label>
+                <label class="radio column is-3">
+                    <input type="radio" name="kind" value="vc">
+                    ボーカロイド
+                </label>
+            </div>
+        </form>
+        <div class="tags block">
+            {% for artist in artist_list %}
+            <div class="list_item" data-kind="ar">
+                <span class="tag is-link is-light">
+                    <a href="{% url 'ranges:detail_artist' artist.pk %}" class="has-text-dark">{{artist}}</a>
+                </span>
+            </div>
+            {% endfor %}
+            {% for vc in vcs %}
+            <div class="list_item" data-kind="vc">
+                <span class=" tag is-primary is-light">
+                    <a href="{% url 'ranges:detail_artist' vc.pk %}" class="has-text-dark">{{vc}}</a>
+                </span>
+            </div>
+            {% endfor %}
+        </div>
     </div>
     {# search by note_name #}
     <div class="panel-content tags are-medium">
@@ -39,4 +75,26 @@
         {% endfor %}
     </div>
 </div>
+
+{% comment %} Sctipt {% endcomment %}
+<script>
+    jQuery(() => {
+        // 絞り込みリストに変化があれば
+        $('.search-box').on('change', 'input', function () {
+            search_filter();
+        });
+    });
+    // リストの絞り込み
+    function search_filter() {
+        $('.list_item').removeClass('is-hide');
+        var name = $('input[name="kind"]:checked').val();
+        if (name !== '') {
+            for (var i = 0; i < $('.list_item').length; i++) {
+                if ($('.list_item').eq(i).data('kind') !== name) {
+                    $('.list_item').eq(i).addClass('is-hide');
+                }
+            }
+        }
+    }
+</script>
 {% endblock content %}

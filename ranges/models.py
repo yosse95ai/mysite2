@@ -85,4 +85,4 @@ class Range(models.Model):
         return s_name.song_name+'/'+a_name.artist_name
 
     class Meta:
-        unique_together = ['song', 'artist']
+        unique_together = ['song', 'artist', 'origin']

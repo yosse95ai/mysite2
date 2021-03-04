@@ -32,12 +32,17 @@
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk result.origin %}"
                     class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+                    <a href="{% url 'ranges:detail_artist' result.artist.pk %}"
+                        class="title is-6">{{ result.artist.artist_name }}</a>
+                    {% if not result.origin %}
+                    <i class="fas fa-microphone-alt"></i>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="level-right">
@@ -94,12 +99,17 @@
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk result.origin %}"
                     class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+                    <a href="{% url 'ranges:detail_artist' result.artist.pk %}"
+                        class="title is-6">{{ result.artist.artist_name }}</a>
+                    {% if not result.origin %}
+                    <i class="fas fa-microphone-alt"></i>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="level-right">
@@ -154,12 +164,17 @@
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk result.origin %}"
                     class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+                    <a href="{% url 'ranges:detail_artist' result.artist.pk %}"
+                        class="title is-6">{{ result.artist.artist_name }}</a>
+                    {% if not result.origin %}
+                    <i class="fas fa-microphone-alt"></i>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="level-right">
@@ -213,12 +228,17 @@
     <div class="columns level is-gapless">
         <div class="level-left">
             <div class="column">
-                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk %}"
+                <a href="{% url 'ranges:detail' result.artist.pk result.song.pk result.origin %}"
                     class="title is-5 has-text-info">{{result.song.song_name}}</a>
             </div>
             <div class="columns is-mobile">
                 <div class="column">
-                    <a href="#" class="title is-6">{{ result.artist.artist_name }}</a></div>
+                    <a href="{% url 'ranges:detail_artist' result.artist.pk %}"
+                        class="title is-6">{{ result.artist.artist_name }}</a>
+                    {% if not result.origin %}
+                    <i class="fas fa-microphone-alt"></i>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="level-right">
