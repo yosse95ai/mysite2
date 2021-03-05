@@ -1,3 +1,4 @@
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404, render
 from django.urls import reverse
 from django.views import generic
@@ -230,3 +231,19 @@ def result_all(request):
         'input_name': 'Search All'
     }
     return render(request, 'ranges/result.html', context)
+
+
+def regist_song_form(request):
+    artists_list = Artist.objects.all()
+    artist_list=list()
+    for artist in artists_list:
+        if not artist.pk.startswith('V-'):
+            artist_list.append(artist)
+    context = {
+        'artist_list': artist_list,
+    }
+    return render(request, 'ranges/regist_page.html', context)
+
+
+def regist_song(request):
+    pass

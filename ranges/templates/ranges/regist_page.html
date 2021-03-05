@@ -1,0 +1,14 @@
+{% extends './base.html' %}
+{% load note_control %}
+{% block title %}曲登録ページ{% endblock title %}
+{% block page_name %}
+Regist Data
+{% endblock page_name %}
+{% block content %}
+<form>
+曲名：<input type="text">
+{% for artist_name in artist_list %}
+<input type="radio">{{artist_name}}
+{% endfor %}
+</form>
+{% endblock content %}
