@@ -1,14 +1,186 @@
 {% extends './base.html' %}
+{% load static %}
 {% load note_control %}
 {% block title %}曲登録ページ{% endblock title %}
 {% block page_name %}
-Regist Data
+Regist Page
 {% endblock page_name %}
 {% block content %}
-<form>
-曲名：<input type="text">
-{% for artist_name in artist_list %}
-<input type="radio">{{artist_name}}
-{% endfor %}
-</form>
+<div class="box">
+    {% if error %}
+    <p class="has-text-danger">ご指定いただいた【<span class="has-text-dark"> {{item.title}} </span>】は既にデータベースに登録されています。</p>
+    {% elif item %}
+    <p class="has-text-success">ご指定いただいた【<span class="has-text-dark"> {{item.title}} </span>】をデータベースに登録しました。</p>
+    {% endif %}
+    {% if song_form %}
+    <form method="post" , action="">
+        {% csrf_token %}
+        <div class="field">
+            <label class="label">曲名</label>
+            <div class="control">
+                {{song_form.title}}
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">作詞</label>
+            <div class="control">
+                <div class="select is-multiple is-small">
+                    {{song_form.lyricists}}
+                </div>
+            </div>
+            <span class="has-text-grey">※複数選択はCtrlを押しながら</span>
+        </div>
+        <div class="field">
+            <label class="label">作曲</label>
+            <div class="control">
+                <div class="select is-multiple is-small">
+                    {{song_form.composers}}
+                </div>
+            </div>
+            <span class="has-text-grey">※複数選択はCtrlを押しながら</span>
+        </div>
+        <div class="field">
+            <label class="label">編曲</label>
+            <div class="control">
+                <div class="select is-multiple is-small">
+                    {{song_form.arrangers}}
+                </div>
+            </div>
+            <span class="has-text-grey">※複数選択はCtrlを押しながら</span>
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">登録</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light">リセット</button>
+            </div>
+        </div>
+    </form>
+    {% elif artist_form %}
+    <form method="post" , action="{% url 'ranges:regist_artist' %}">
+        {% csrf_token %}
+        <div class="field">
+            <label class="label">アーティスト名</label>
+            <div class="control">
+                {{artist_form.name}}
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Primary Key</label>
+            <div class="control">
+                {{artist_form.pk}}
+            </div>
+            <span class="has-text-grey">※将来的に自動化しよう</span>
+        </div>
+        <div class="field">
+            <label class="label">関連アイテム</label>
+            <div class="control">
+                <div class="select is-multiple is-small">
+                    {{artist_form.aff}}
+                </div>
+            </div>
+            <span class="has-text-grey">※複数選択はCtrlを押しながら</span>
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">登録</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light">リセット</button>
+            </div>
+        </div>
+    </form>
+    {% elif range_form %}
+    {{post}}
+    <form method="post" , action="">
+        {% csrf_token %}
+        <div class="field">
+            <label class="label">曲名</label>
+            <div class="control">
+                <div class="select is-small">
+                    {{range_form.title}}
+                </div>
+            </div>
+            <a class="has-text-warning" href="{% url 'ranges:regist_song' %}">※曲がなければ追加してください <i
+                    class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="field">
+            <label class="label">アーティスト名</label>
+            <div class="control">
+                <div class="select is-small">
+                    {{range_form.artist}}
+                </div>
+            </div>
+            <a class="has-text-warning" href="{% url 'ranges:regist_artist' %}">※名称がなければ追加してください <i
+                    class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="field">
+            <label class="label">パフォーマー</label>
+            <div class="control">
+                <div class="select is-multiple is-small">
+                    {{range_form.performer}}
+                </div>
+            </div>
+            <span class="has-text-grey">※複数選択はCtrlを押しながら</span>
+            <p class="has-text-grey">※バンドであればバンド名</p>
+            <p class="has-text-grey">※ボカロオリジナルはボーカロイド名</p>
+        </div>
+        <div class="field">
+            <label class="label">最低音</label>
+            <div class="control">
+                <div class="select is-small">
+                    {{range_form.lowest_note}}
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">最高音</label>
+            <div class="control">
+                <div class="select is-small">
+                    {{range_form.highest_note}}
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">フェイク</label>
+            <div class="control">
+                <div class="select is-small">
+                    {{range_form.fake_note}}
+                </div>
+            </div>
+            <span class="has-text-grey">※なければ未選択でOK</span>
+        </div>
+        <div class="field">
+            <label class="label">ジャンル</label>
+            <div class="control">
+                <div class="select is-small">
+                    {{range_form.genre}}
+                </div>
+            </div>
+            <span class="has-text-grey">※Cover(歌ってみた)</span>
+        </div>
+        <div class="field">
+            <label class="label">リリース日</label>
+            <div class="control">
+                {{range_form.release_date}}
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">オリジナルですか？</label>
+            <div class="control">
+                {{range_form.is_original}}
+            </div>
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">登録</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light">リセット</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</div>
 {% endblock content %}

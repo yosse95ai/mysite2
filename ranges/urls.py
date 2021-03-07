@@ -16,5 +16,7 @@ urlpatterns = [
     path('search-result/genre-<slug:genre_pk>',
          views.result_genre, name='result_genre'),
     path('search-result/all', views.result_all, name='result_all'),
-    path('regist-song/', views.regist_song_form, name='regist_song'),
+    path('song/regist', views.regist_song_form, name='regist_song'),
+    path('artist/regist', views.regist_artist_form, name='regist_artist'),
+    path('range/regist', views.regist_range_form, name='regist_renge'),
 ]

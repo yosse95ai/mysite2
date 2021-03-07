@@ -1,13 +1,16 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, get_list_or_404, render
+from django.shortcuts import get_object_or_404, get_list_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 
+from datetime import datetime
+
 from .models import Range, Artist, Song, Note, Genre
 from .templatetags import noteBar as nb
+from .forms import SongForm, ArtistForm, RangeForm
 
 
 def queryError(error_name, input_name=None):
@@ -63,7 +66,7 @@ def detail(request, artist_pk, song_pk, origin=''):
         lyricists = song.lyricist.all()
         arrangers = song.arranger.all()
         performers = target.performer.all()
-        release = target.release_date
+        release = target.release_date.strftime('%Y年%m月%d日')
         genre = target.genre
         is_original = target.origin
         context = {
@@ -141,7 +144,8 @@ def search(request):
     # 音域検索
     note_list = list()
     for note in notes_list:
-        if Range.objects.filter(highest_note=note.pk) or Range.objects.filter(lowest_note=note.pk):
+        if Range.objects.filter(
+        Q(highest_note=note.pk) | Q(lowest_note=note.pk) | Q(fake_note=note.pk)):
             note_list.append(nb.noteToNumber(note.pk))
     ordered_note = list()
     for note_n in sorted(note_list):
@@ -197,7 +201,7 @@ def result_range(request, note_pk):
     search for registared note list
     '''
     ranges = Range.objects.filter(
-        Q(highest_note=note_pk) | Q(lowest_note=note_pk)).order_by('highest_note')
+        Q(highest_note=note_pk) | Q(lowest_note=note_pk) | Q(fake_note=note_pk)).order_by('highest_note')
     if not ranges:
         context = queryError('range_note_error',
                              input_name=Note.objects.get(pk=note_pk).note_name)
@@ -234,16 +238,136 @@ def result_all(request):
 
 
 def regist_song_form(request):
-    artists_list = Artist.objects.all()
-    artist_list=list()
-    for artist in artists_list:
-        if not artist.pk.startswith('V-'):
-            artist_list.append(artist)
-    context = {
-        'artist_list': artist_list,
-    }
-    return render(request, 'ranges/regist_page.html', context)
+    ARRENGER_NULL = True
+    template = 'ranges/regist_page.html'
+    form = SongForm(request.POST or None)
+    post = dict()
+    # formの更新
+    form.fields['lyricists'].choices = [(artist.pk, artist.artist_name)
+                                        for artist in Artist.objects.all() if not artist.pk.startswith('V-')]
+    form.fields['composers'].choices = [(artist.pk, artist.artist_name)
+                                        for artist in Artist.objects.all() if not artist.pk.startswith('V-')]
+    form.fields['arrangers'].choices = [(artist.pk, artist.artist_name)
+                                        for artist in Artist.objects.all() if not artist.pk.startswith('V-')]
+    if form.is_valid():
+        title = post['title'] = form.cleaned_data['title']
+        lyricist = post['lyricist'] = form.cleaned_data['lyricists']
+        composer = post['composer'] = form.cleaned_data['composers']
+        arranger = post['arranger'] = form.cleaned_data['arrangers']
+        case = False
+        if arranger == [''] or arranger == []:
+            case = ARRENGER_NULL
+        try:
+            if case == ARRENGER_NULL:
+                Song.objects.get(
+                    song_name=title, lyricist__in=lyricist, composer__in=composer)
+            else:
+                Song.objects.get(
+                    song_name=title, lyricist__in=lyricist, composer__in=composer, arranger__in=arranger)
+        except Song.DoesNotExist:
+            song = Song.objects.create(song_name=title)
+            for l in lyricist:
+                song.lyricist.add(l)
+            for c in composer:
+                song.composer.add(c)
+            if case is not ARRENGER_NULL:
+                for a in arranger:
+                    song.arranger.add(a)
+            song.save()
+            context = {'item': post, 'song_form': SongForm()}
+        else:
+            context = {'item': post, 'song_form': SongForm(), 'error': True}
+        return render(request, template, context)
+    return render(request, template, {'song_form': form})
 
 
-def regist_song(request):
-    pass
+def regist_artist_form(request):
+    template = 'ranges/regist_page.html'
+    form = ArtistForm(request.POST or None)
+    # formの更新
+    form.fields['aff'].choices = [(artist.pk, artist.artist_name)
+                                  for artist in Artist.objects.all() if not artist.pk.startswith('V-')]
+    post = dict()
+    if form.is_valid():
+        title = post['title'] = form.cleaned_data['name']
+        pk = post['PK'] = form.cleaned_data['pk']
+        aff = post['Aff'] = form.cleaned_data['aff']
+        try:
+            Artist.objects.get(pk=pk)
+        except Artist.DoesNotExist:
+            artist = Artist.objects.create(artist_id=pk, artist_name=title)
+            for a in aff:
+                artist.affiliation.add(a)
+            artist.save()
+            context = {'item': post, 'artist_form': ArtistForm()}
+        else:
+            context = {'item': post, 'artist_form': ArtistForm(),
+                       'error': True}
+        return render(request, template, context)
+    return render(request, template, {'artist_form': form})
+
+
+def regist_range_form(request):
+    template = 'ranges/regist_page.html'
+    form = RangeForm(request.POST or None)
+    # form の更新
+    form.fields['title'].choices = [
+        (song.pk, song.song_name) for song in Song.objects.all()]
+    form.fields['artist'].choices = [
+        (artist.pk, artist.artist_name) for artist in Artist.objects.all() if not artist.pk.startswith('V-')]
+    form.fields['performer'].choices = [
+        (artist.pk, artist.artist_name) for artist in Artist.objects.all()]
+    form.fields['lowest_note'].choices = form.fields['highest_note'].choices = [
+        (note.pk, note.note_name) for note in Note.objects.all()]
+    form.fields['fake_note'].choices = [
+        ('', '-----')]+[(note.pk, note.note_name) for note in Note.objects.all()]
+    form.fields['genre'].choices = [
+        (genre.pk, genre.genre_name) for genre in Genre.objects.all()]
+    post = dict()
+    if form.is_valid():
+        title = Song.objects.get(pk=int(form.cleaned_data['title']))
+        artist = Artist.objects.get(pk=form.cleaned_data['artist'])
+        performer = form.cleaned_data['performer']
+        lowest_note = Note.objects.get(pk=form.cleaned_data['lowest_note'])
+        highest_note = Note.objects.get(pk=form.cleaned_data['highest_note'])
+        fake = form.cleaned_data['fake_note']
+        if fake:
+            fake_note = Note.objects.get(pk=fake)
+        genre = Genre.objects.get(pk=form.cleaned_data['genre'])
+        release_date = form.cleaned_data['release_date']
+        is_original = True
+        if form.cleaned_data['is_original'] == 'False':
+            is_original = False
+        song_name = title.song_name
+        artist_name = artist.artist_name
+        post['title'] = song_name + ' / ' + artist_name
+
+        try:
+            Range.objects.get(song=title, artist=artist, origin=is_original)
+        except Range.DoesNotExist:
+            if fake:
+                data = Range.objects.create(
+                    song=title,
+                    artist=artist,
+                    lowest_note=lowest_note,
+                    highest_note=highest_note,
+                    fake_note=fake_note,
+                    genre=genre,
+                    release_date=release_date
+                )
+            else:
+                data = Range.objects.create(
+                    song=title,
+                    artist=artist,
+                    lowest_note=lowest_note,
+                    highest_note=highest_note,
+                    genre=genre,
+                    release_date=release_date
+                )
+            for p in performer:
+                data.performer.add(p)
+            context = {'item': post, 'range_form': RangeForm(), }
+        else:
+            context = {'item': post, 'range_form': RangeForm(), 'error': True}
+        return render(request, template, context)
+    return render(request, template, {'range_form': form})
