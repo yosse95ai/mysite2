@@ -8,7 +8,7 @@ class Artist(models.Model):
     artist_id = models.CharField(max_length=10, primary_key=True)
     artist_name = models.CharField("Artist's name", max_length=50)
     affiliation = models.ManyToManyField(
-        "self",related_name="affiliation", null=True, blank=True)
+        "self",related_name="affiliation", blank=True)
 
     def __str__(self):
         return self.artist_name
@@ -23,10 +23,10 @@ class Song(models.Model):
 
     song_id = models.AutoField(primary_key=True)
     song_name = models.CharField("Tilte", max_length=100)
-    composer = models.ManyToManyField(Artist, related_name="composer_name")
     lyricist = models.ManyToManyField(Artist, related_name="lyricist_name")
+    composer = models.ManyToManyField(Artist, related_name="composer_name")
     arranger = models.ManyToManyField(
-        Artist, related_name="arranger_name", null=True, blank=True)
+        Artist, related_name="arranger_name", blank=True)
 
     def __str__(self):
         return self.song_name+': '+",".join([a.artist_name for a in self.composer.all()])
@@ -40,8 +40,8 @@ class Song(models.Model):
     def get_arranger(self):
         return "\n".join([a.artist_name for a in self.arranger.all()])
 
-    get_composer.short_description = 'Composer'
     get_lyricist.short_description = 'Lyricist'
+    get_composer.short_description = 'Composer'
     get_arranger.short_description = 'Arranger'
 
 

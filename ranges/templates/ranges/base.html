@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="{% static 'style/style.css' %}">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="{% static 'js/func.js' %}"></script>
+	{% block scripts %}{% endblock scripts %}
 </head>
 
 <body>
@@ -52,6 +53,7 @@
 			<aside class="box menu">
 				<p class="menu-label">SEARCH</p>
 				<form method="post" action="{% url 'ranges:result' %}">
+					{% csrf_token %}
 					<div class="field has-addons">
 						<div class="control">
 							{% csrf_token %}
@@ -96,10 +98,28 @@
 						<div class="content">
 							<p><strong>HIROAKI</strong></p>
 							<a href="https://twitter.com/yosse95ai" target="_blank">
-							<i class="fab fa-twitter has-text-safe"></i><span class="has-text-dark"> @yosse95ai</span></a>
+								<i class="fab fa-twitter has-text-safe"></i><span class="has-text-dark">
+									@yosse95ai</span></a>
 						</div>
 					</div>
 				</div>
+				<p class="menu-label">Regist</p>
+				<ul class="menu-list">
+					<li class="menu-content">
+						<a href="{% url 'ranges:regist_artist' %}">
+							<i class="fas fa-pencil-ruler"></i> アーティスト追加 <i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
+					<li class="menu-content">
+						<a href="{% url 'ranges:regist_song' %}">
+							<i class="fas fa-compact-disc"></i> 曲追加 <i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
+					<li class="menu-content">
+						<a href="{% url 'ranges:regist_renge' %}">
+							<i class="fas fa-registered"></i> 音域登録 <i class="fas fa-chevron-right"></i>
+						</a>
+					</li>
 			</aside>
 		</div>
 	</main>
