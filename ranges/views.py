@@ -366,6 +366,7 @@ def regist_range_form(request):
                 )
             for p in performer:
                 data.performer.add(p)
+            data.save()
             context = {'item': post, 'range_form': RangeForm(), }
         else:
             context = {'item': post, 'range_form': RangeForm(), 'error': True}
